@@ -15,11 +15,11 @@ public class TKBRestController {
     private TKBService tkbService;
 
     @GetMapping
-    public List<TKB>  getAllTKB() {
+    public List<TKB> getAllTKB() {
         return tkbService.getAllTKB();
     }
 
-    @GetMapping("/{maKB}")
+    @GetMapping("/{maTKB}")  // fix: đổi {maKB} → {maTKB}
     public ResponseEntity<TKB> getByIdTKB(@PathVariable String maTKB) {
         return tkbService.getByIdTKB(maTKB)
                 .map(ResponseEntity::ok)
@@ -36,14 +36,27 @@ public class TKBRestController {
         return tkbService.getByMaMH(maMH);
     }
 
-    @GetMapping("/phong/{maPH}")
-    public List<TKB> getByMaPH(@PathVariable String maPH) {
-        return tkbService.getByMaPH(maPH);
+    @GetMapping("/phong/{maPhong}")
+    public List<TKB> getByMaPhong(@PathVariable String maPhong) {
+        return tkbService.getByMaPhong(maPhong);
     }
 
-    @GetMapping("/giaovien/{MaGV}")
+    @GetMapping("/giaovien/{maGV}")
     public List<TKB> getByMaGV(@PathVariable String maGV) {
         return tkbService.getByMaGV(maGV);
+    }
+
+    @GetMapping("/filter")
+    public List<TKB> filter(
+            @RequestParam(defaultValue = "") String maLop,
+            @RequestParam(defaultValue = "") String maMH,
+            @RequestParam(defaultValue = "0") int thu) {
+        return tkbService.filter(maLop, maMH, thu);
+    }
+
+    @GetMapping("/danhsachlop")
+    public List<String> getDanhSachLop() {
+        return tkbService.getDistinctMaLop();
     }
 
     @PostMapping
@@ -55,15 +68,16 @@ public class TKBRestController {
     }
 
     @PutMapping("/{maTKB}")
-    public ResponseEntity<TKB>  update(@PathVariable String maTKB, @RequestBody TKB tkb) {
+    public ResponseEntity<TKB> update(@PathVariable String maTKB, @RequestBody TKB tkb) {
         if (!tkbService.existsByIdTKB(maTKB)) {
             return ResponseEntity.notFound().build();
         }
+        tkb.setMaTKB(maTKB);
         return ResponseEntity.ok(tkbService.save(tkb));
     }
 
     @DeleteMapping("/{maTKB}")
-    public ResponseEntity<TKB> delete(@PathVariable String maTKB) {
+    public ResponseEntity<Void> delete(@PathVariable String maTKB) {
         if (!tkbService.existsByIdTKB(maTKB)) {
             return ResponseEntity.notFound().build();
         }

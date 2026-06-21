@@ -1,6 +1,5 @@
 package com.qlhs.server.entity;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -15,20 +14,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PhongHoc {
-
     @Id
-    @Column(name = "MaPH", length = 50)
-    private String maPH;
+    @Column(name = "MaPhong")
+    private String maPhong;
 
-    @Column(name = "TenPH", length = 100)
-    private String tenPH;
+    @Column(name = "TenPhong")
+    private String tenPhong;
 
-    @Column(name = "LoaiPhong", length = 100)
-    private String loaiPhong;
-
-    @Column(name = "SucChua", length = 50)
+    @Column(name = "SucChua")
     private int sucChua;
 
-    @Column(name = "TinhTrang", length = 100)
+    @Column(name = "LoaiPhong")
+    private String loaiPhong;
+
+    @Column(name = "TinhTrang")
     private String tinhTrang;
 }

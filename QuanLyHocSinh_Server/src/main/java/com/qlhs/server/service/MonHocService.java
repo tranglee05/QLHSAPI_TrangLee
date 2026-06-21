@@ -21,6 +21,11 @@ public class MonHocService {
     public Optional<MonHoc> getByIdMH(String maMH) {
         return monHocRepository.findById(maMH);
     }
+    public List<MonHoc> search(String keyword) {
+        return monHocRepository.findAll().stream()
+                .filter(m -> m.getMaMH().contains(keyword) || m.getTenMH().contains(keyword))
+                .collect(java.util.stream.Collectors.toList());
+    }
     public MonHoc saveMH(MonHoc monHoc) {
         return monHocRepository.save(monHoc);
     }

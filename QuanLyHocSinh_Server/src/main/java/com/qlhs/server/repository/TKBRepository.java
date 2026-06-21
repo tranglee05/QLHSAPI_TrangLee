@@ -10,7 +10,7 @@ import java.util.List;
 public interface TKBRepository extends JpaRepository<TKB,String> {
     List<TKB> findByMaLop(String maLop);
     List<TKB> findByMaMH(String maMH);
-    List<TKB> findByMaPH(String maPH);
+    List<TKB> findByMaPhong(String maPhong);
     List<TKB> findByMaGV(String maGV);
     List<TKB> findByThu(int thu);
 }

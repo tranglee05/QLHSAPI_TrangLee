@@ -1,12 +1,7 @@
 package com.qlhs.server.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "ThoiKhoaBieu")
@@ -14,29 +9,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TKB {
-
     @Id
-    @Column(name = "MaTKB", length = 50)
+    @Column(name = "MaTKB")
     private String maTKB;
 
-    @Column(name = "Thu", length = 50)
-    private int thu;
-
-    @Column(name = "MaLop", length = 50)
+    @Column(name = "MaLop")
     private String maLop;
 
-    @Column(name = "MaMH", length = 50)
+    @Column(name = "MaMH")
     private String maMH;
 
-    @Column(name = "MaGV", length = 50)
+    @Column(name = "MaGV")
     private String maGV;
 
-    @Column(name = "MaPH", length = 50)
-    private String maPH;
+    @Column(name = "MaPhong")
+    private String maPhong;
 
-    @Column(name = "TietBD", length = 50)
-    private int tietBD;
+    @Column(name = "Thu")
+    private Integer thu;
 
-    @Column(name = "TietKT", length = 50)
-    private int tietKT;
+    @Column(name = "TietBatDau")
+    private Integer tietBatDau;
+
+    @Column(name = "TietKetThuc")
+    private Integer tietKetThuc;
+
+    @Transient
+    private String tenMH;
 }

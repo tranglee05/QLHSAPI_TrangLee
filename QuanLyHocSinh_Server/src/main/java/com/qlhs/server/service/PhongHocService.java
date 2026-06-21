@@ -16,16 +16,23 @@ public class PhongHocService {
     public List<PhongHoc> getAllPH() {
         return phongHocRepository.findAll();
     }
-    public Optional<PhongHoc> getByIdPH(String maPH){
-        return phongHocRepository.findById(maPH);
+    public Optional<PhongHoc> getByIdPH(String maPhong){
+        return phongHocRepository.findById(maPhong);
+    }
+    public List<PhongHoc> search(String ma, String loai, String tinhTrang) {
+        return phongHocRepository.findAll().stream()
+                .filter(p -> ma.isEmpty() || p.getMaPhong().contains(ma))
+                .filter(p -> loai.isEmpty() || loai.equals("Tất cả") || p.getLoaiPhong().equals(loai))
+                .filter(p -> tinhTrang.isEmpty() || tinhTrang.equals("Tất cả") || p.getTinhTrang().equals(tinhTrang))
+                .collect(java.util.stream.Collectors.toList());
     }
     public PhongHoc save(PhongHoc phongHoc){
         return phongHocRepository.save(phongHoc);
     }
-    public void delete(String maPH){
-        phongHocRepository.deleteById(maPH);
+    public void delete(String maPhong){
+        phongHocRepository.deleteById(maPhong);
     }
-    public boolean existsPH(String maPH){
-        return phongHocRepository.existsById(maPH);
+    public boolean existsPH(String maPhong){
+        return phongHocRepository.existsById(maPhong);
     }
 }

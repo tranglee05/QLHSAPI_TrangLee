@@ -26,6 +26,12 @@ public class MonHocRestController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/search")
+    public List<MonHoc> search(@RequestParam(defaultValue = "") String keyword) {
+        return monHocService.search(keyword);
+    }
+
     @PostMapping
     public ResponseEntity<MonHoc> createMH(@RequestBody MonHoc monHoc) {
         if (monHocService.existsMH(monHoc.getMaMH())) {
