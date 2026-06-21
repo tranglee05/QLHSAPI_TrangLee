@@ -10,8 +10,9 @@ import lombok.*;
 @AllArgsConstructor
 public class TKB {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MaTKB")
-    private String maTKB;
+    private Integer maTKB;
 
     @Column(name = "MaLop")
     private String maLop;

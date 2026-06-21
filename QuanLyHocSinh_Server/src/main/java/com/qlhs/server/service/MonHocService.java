@@ -35,4 +35,8 @@ public class MonHocService {
     public boolean existsMH(String maMH) {
         return monHocRepository.existsById(maMH);
     }
+    public boolean existsByTenMH(String tenMH) {
+        return monHocRepository.findAll().stream()
+                .anyMatch(m -> m.getTenMH().equalsIgnoreCase(tenMH));
+    }
 }

@@ -19,11 +19,12 @@ public class TKBController {
         this.apiClient = new TKBApiClient();
 
         try {
-            if (!Model.Auth.isHocSinh()) {
-                view.setCboLocMaLop(apiClient.getDistinctMaLop());
-            }
+            view.setDanhSachLop(apiClient.getDanhSachLopTatCa());
+            view.setDanhSachMon(apiClient.getDanhSachMon());
+            view.setDanhSachGV(apiClient.getDanhSachGV());
+            view.setDanhSachPhong(apiClient.getDanhSachPhong());
         } catch (Exception ex) {
-            view.showMessage("Không thể tải danh sách lớp: " + ex.getMessage());
+            view.showMessage("Không thể tải danh sách: " + ex.getMessage());
         }
 
         initEvents();

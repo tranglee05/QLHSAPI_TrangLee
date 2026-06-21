@@ -35,4 +35,8 @@ public class PhongHocService {
     public boolean existsPH(String maPhong){
         return phongHocRepository.existsById(maPhong);
     }
+    public boolean existsByTenPhong(String tenPhong) {
+        return phongHocRepository.findAll().stream()
+                .anyMatch(p -> p.getTenPhong().equalsIgnoreCase(tenPhong));
+    }
 }

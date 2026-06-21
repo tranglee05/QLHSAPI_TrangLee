@@ -35,7 +35,10 @@ public class MonHocRestController {
     @PostMapping
     public ResponseEntity<MonHoc> createMH(@RequestBody MonHoc monHoc) {
         if (monHocService.existsMH(monHoc.getMaMH())) {
-            return ResponseEntity.badRequest().build(); //trùng mã
+            return ResponseEntity.status(409).body(null);
+        }
+        if (monHocService.existsByTenMH(monHoc.getTenMH())) {
+            return ResponseEntity.status(422).body(null);
         }
         return ResponseEntity.ok(monHocService.saveMH(monHoc));
     }

@@ -37,9 +37,12 @@ public class PhongHocRestController {
 
 
     @PostMapping
-    public ResponseEntity<PhongHoc> create(@RequestBody PhongHoc phongHoc){
-        if (phongHocService.existsPH(phongHoc.getMaPhong())){
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<PhongHoc> create(@RequestBody PhongHoc phongHoc) {
+        if (phongHocService.existsPH(phongHoc.getMaPhong())) {
+            return ResponseEntity.status(409).body(null);
+        }
+        if (phongHocService.existsByTenPhong(phongHoc.getTenPhong())) {
+            return ResponseEntity.status(422).body(null);
         }
         return ResponseEntity.ok(phongHocService.save(phongHoc));
     }

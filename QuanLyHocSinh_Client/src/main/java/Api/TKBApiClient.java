@@ -12,6 +12,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 public class TKBApiClient {
     private static final String BASE_URL = "http://localhost:8080/api/tkb";
@@ -48,12 +49,39 @@ public class TKBApiClient {
         return gson.fromJson(response.body(), type);
     }
 
-    public List<String> getDistinctMaLop() throws Exception {
+    public List<Map<String, String>> getDanhSachGV() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/danhsachlop"))
+                .uri(URI.create(BASE_URL + "/danhsachgv"))
                 .GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Type type = new TypeToken<List<String>>(){}.getType();
+        Type type = new TypeToken<List<Map<String, String>>>(){}.getType();
+        return gson.fromJson(response.body(), type);
+    }
+
+    public List<Map<String, String>> getDanhSachLopTatCa() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/danhsachlop/tatca"))
+                .GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Type type = new TypeToken<List<Map<String, String>>>(){}.getType();
+        return gson.fromJson(response.body(), type);
+    }
+
+    public List<Map<String, String>> getDanhSachPhong() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/danhsachphong"))
+                .GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Type type = new TypeToken<List<Map<String, String>>>(){}.getType();
+        return gson.fromJson(response.body(), type);
+    }
+
+    public List<Map<String, String>> getDanhSachMon() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/danhsachmon"))
+                .GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Type type = new TypeToken<List<Map<String, String>>>(){}.getType();
         return gson.fromJson(response.body(), type);
     }
 
@@ -65,7 +93,7 @@ public class TKBApiClient {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() == 400) throw new Exception("Trùng phòng hoặc trùng tiết");
+        if (response.statusCode() == 409) throw new Exception("Trùng tiết học (lớp, GV hoặc phòng đã có lịch)");
         return gson.fromJson(response.body(), TKB.class);
     }
 

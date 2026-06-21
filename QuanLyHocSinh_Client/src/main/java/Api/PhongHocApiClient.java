@@ -48,7 +48,8 @@ public class PhongHocApiClient {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() == 400) throw new Exception("Mã phòng đã tồn tại");
+        if (response.statusCode() == 409) throw new Exception("Mã phòng đã tồn tại");
+        if (response.statusCode() == 422) throw new Exception("Tên phòng đã tồn tại");
         return gson.fromJson(response.body(), PhongHoc.class);
     }
 

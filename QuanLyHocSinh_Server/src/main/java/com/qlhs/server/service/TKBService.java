@@ -29,7 +29,7 @@ public class TKBService {
         return list;
     }
 
-    public Optional<TKB> getByIdTKB(String maTKB) {
+    public Optional<TKB> getByIdTKB(Integer maTKB) {
         return tkbRepository.findById(maTKB);
     }
 
@@ -78,11 +78,26 @@ public class TKBService {
         return tkbRepository.save(tkb);
     }
 
-    public void delete(String maTKB) {
+    public void delete(Integer maTKB) {
         tkbRepository.deleteById(maTKB);
     }
 
-    public boolean existsByIdTKB(String maTKB) {
+    public boolean existsByIdTKB(Integer maTKB) {
         return tkbRepository.existsById(maTKB);
+    }
+    public boolean isTrungTiet(TKB tkb) {
+        return tkbRepository.findAll().stream().anyMatch(t ->
+                t.getMaLop().equals(tkb.getMaLop()) &&
+                        t.getThu().equals(tkb.getThu()) &&
+                        !(tkb.getTietBatDau() > t.getTietKetThuc() || tkb.getTietKetThuc() < t.getTietBatDau())
+                        ||
+                        t.getMaGV().equals(tkb.getMaGV()) &&
+                                t.getThu().equals(tkb.getThu()) &&
+                                !(tkb.getTietBatDau() > t.getTietKetThuc() || tkb.getTietKetThuc() < t.getTietBatDau())
+                        ||
+                        t.getMaPhong().equals(tkb.getMaPhong()) &&
+                                t.getThu().equals(tkb.getThu()) &&
+                                !(tkb.getTietBatDau() > t.getTietKetThuc() || tkb.getTietKetThuc() < t.getTietBatDau())
+        );
     }
 }
