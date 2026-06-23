@@ -154,7 +154,7 @@ public class TKBController {
 
     public void loadData() {
         try {
-            List<TKB> list = apiClient.getAll(); // đổi từ getByFilter → getAll
+            List<TKB> list = apiClient.getAll();
             view.setTableData(list);
         } catch (Exception ex) {
             view.showMessage("Không thể kết nối server: " + ex.getMessage());
