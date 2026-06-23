@@ -40,7 +40,21 @@ public class TKBController {
         setIdleState.run();
 
         view.addBtnXemDanhSachListener(e -> loadData());
-        view.addBtnLocTimKiemListener(e -> loadData());
+        view.addBtnLocTimKiemListener( e -> {
+            try {
+                String locLop = view.getLocMaLop();
+                String locMon = view.getLocMon();
+                int locThu = view.getLocThu();
+                List<TKB> list = apiClient.getByFilter(locLop, locMon, locThu);
+                view.setTableData(list);
+                if (list.isEmpty() && !locMon.isEmpty()) {
+                    view.showMessage("Không tìm thấy TKB phù hợp với bộ lọc!");
+                }
+            } catch (Exception ex) {
+                view.showMessage("Không thể kết nối server: " + ex.getMessage());
+            }
+        }
+        );
 
         view.addBtnThemListener(e -> {
             editMode[0] = false;
@@ -140,14 +154,8 @@ public class TKBController {
 
     public void loadData() {
         try {
-            String locLop = view.getLocMaLop();
-            String locMon = view.getLocMon();
-            int locThu = view.getLocThu();
-            List<TKB> list = apiClient.getByFilter(locLop, locMon, locThu);
+            List<TKB> list = apiClient.getAll(); // đổi từ getByFilter → getAll
             view.setTableData(list);
-            if (list.isEmpty() && !locMon.isEmpty()) {
-                view.showMessage("Không tìm thấy TKB phù hợp với bộ lọc!");
-            }
         } catch (Exception ex) {
             view.showMessage("Không thể kết nối server: " + ex.getMessage());
         }
