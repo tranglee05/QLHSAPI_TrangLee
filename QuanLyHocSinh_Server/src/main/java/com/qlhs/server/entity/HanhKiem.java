@@ -8,18 +8,21 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@IdClass(HanhKiem.HanhKiemId.class)
 public class HanhKiem {
 
-    @Id // Tạm thời dùng maHS làm Id.
+    @Id
     @Column(name = "MaHS", length = 50)
     private String maHS;
 
     @Column(name = "MaLop", length = 50)
     private String maLop;
 
+    @Id
     @Column(name = "HocKy")
     private int hocKy;
 
+    @Id
     @Column(name = "NamHoc", length = 50)
     private String namHoc;
 
@@ -28,4 +31,13 @@ public class HanhKiem {
 
     @Column(name = "NhanXet", columnDefinition = "NVARCHAR(255)")
     private String nhanXet;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class HanhKiemId implements java.io.Serializable {
+        private String maHS;
+        private String namHoc;
+        private int hocKy;
+    }
 }

@@ -1,7 +1,7 @@
 package Controller.Tien;
 
 import Api.HanhKiemApi;
-import Dao.LopDAO;
+import Api.LopApi;
 import Model.HanhKiem;
 import Model.LopGVCN;
 import TienIch.XuatExcel;
@@ -27,8 +27,8 @@ public class HanhKiemController {
     }
 
     private void loadComboBoxData() {
-        LopDAO lopDAO = new LopDAO();
-        List<LopGVCN> lops = lopDAO.getAllLop();
+        LopApi lopApi = new LopApi();
+        List<LopGVCN> lops = lopApi.getAllLop();
         List<String> maLops = new ArrayList<>();
         for (LopGVCN l : lops) {
             maLops.add(l.getMaLop());

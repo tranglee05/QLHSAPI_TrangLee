@@ -1,12 +1,30 @@
 package Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class LichThi {
+    @SerializedName(value = "maLT", alternate = {"MaLT", "MALT", "malt"})
     private int maLT;
+    
+    @SerializedName(value = "tenKyThi", alternate = {"TenKyThi", "TENKYTHI", "tenkythi"})
     private String tenKyThi;
+    
+    @SerializedName(value = "maMH", alternate = {"MaMH", "MAMH", "mamh"})
     private String maMH;
+    
+    @SerializedName(value = "tenMH", alternate = {"TenMH", "TENMH", "tenmh"})
+    private String tenMH;
+    
+    @SerializedName(value = "ngayThi", alternate = {"NgayThi", "NGAYTHI", "ngaythi"})
     private String ngayThi;     
+    
+    @SerializedName(value = "gioBatDau", alternate = {"GioBatDau", "GIOBATDAU", "giobatdau"})
     private String gioBatDau;  
+    
+    @SerializedName(value = "gioKetThuc", alternate = {"GioKetThuc", "GIOKETTHUC", "gioketthuc"})
     private String gioKetThuc;  
+    
+    @SerializedName(value = "maPhong", alternate = {"MaPhong", "MAPHONG", "maphong"})
     private String maPhong;
 
     public LichThi() {}
@@ -30,6 +48,9 @@ public class LichThi {
 
     public String getMaMH() { return maMH; }
     public void setMaMH(String maMH) { this.maMH = maMH; }
+
+    public String getTenMH() { return tenMH; }
+    public void setTenMH(String tenMH) { this.tenMH = tenMH; }
 
     public String getNgayThi() { return ngayThi; }
     public void setNgayThi(String ngayThi) { this.ngayThi = ngayThi; }

@@ -2,7 +2,7 @@ package Controller.Tien;
 
 import Api.DiemApi;
 import Api.MonHocApiClient;
-import Dao.LopDAO;
+import Api.LopApi;
 import Model.Auth;
 import Model.Diem;
 import Model.LopGVCN;
@@ -29,28 +29,25 @@ public class DiemController {
     }
 
     private void loadComboBoxData() {
-        LopDAO lopDAO = new LopDAO();
+        LopApi lopApi = new LopApi();
         MonHocApiClient monHocApiClient = new MonHocApiClient();
 
-        List<LopGVCN> lops = lopDAO.getAllLop();
+        List<LopGVCN> lops = lopApi.getAllLop();
         List<String> maLops = new ArrayList<>();
         for (LopGVCN l : lops) {
             maLops.add(l.getMaLop());
         }
         view.setMaLopData(maLops);
 
-        List<String> maMons = new ArrayList<>();
         try {
             List<MonHoc> mons = monHocApiClient.getAll();
-            for (MonHoc m : mons) {
-                maMons.add(m.getMaMH());
-            }
+            view.setMonHocData(mons);
         } catch (Exception e) {
             e.printStackTrace();
             // Nếu lỗi kết nối, có thể đưa ra thông báo hoặc để trống danh sách
             System.out.println("Lỗi khi tải danh sách môn học từ API: " + e.getMessage());
+            view.setMonHocData(new ArrayList<>());
         }
-        view.setMonHocData(maMons);
 
         List<Integer> hks = dao.getDistinctHocKy();
         if (hks.isEmpty()) {

@@ -16,8 +16,8 @@ import java.util.List;
 import javax.swing.border.TitledBorder;
 import TienIch.ButtonStyleHelper;
 import TienIch.TableSortHelper;
-import Dao.LopDAO;
-
+import TienIch.TableSortHelper;
+import Api.LopApi;
 public class QuanLyHocPhiPanel extends JPanel {
     private JComboBox<String> cboMaLop, cboNamHoc;
     private JComboBox<String> cboHocKy;
@@ -397,10 +397,10 @@ public class QuanLyHocPhiPanel extends JPanel {
     private void loadLopComboBox() {
         System.out.println("\n=== Bắt đầu loadLopComboBox ===");
         try {
-            LopDAO lopDAO = new LopDAO();
-            System.out.println("✓ Tạo LopDAO thành công");
+            LopApi lopApi = new LopApi();
+            System.out.println("✓ Tạo LopApi thành công");
             
-            var lopList = lopDAO.getAllLop();
+            var lopList = lopApi.getAllLop();
             System.out.println("✓ Gọi getAllLop() thành công, kết quả: " + (lopList == null ? "null" : lopList.size() + " lớp"));
             
             cboMaLop.removeAllItems();
@@ -440,10 +440,10 @@ public class QuanLyHocPhiPanel extends JPanel {
     private void loadNamHocComboBox() {
         System.out.println("\n=== Bắt đầu loadNamHocComboBox ===");
         try {
-            LopDAO lopDAO = new LopDAO();
-            System.out.println("✓ Tạo LopDAO thành công");
+            LopApi lopApi = new LopApi();
+            System.out.println("✓ Tạo LopApi thành công");
             
-            var lopList = lopDAO.getAllLop();
+            var lopList = lopApi.getAllLop();
             System.out.println("✓ Gọi getAllLop() thành công, kết quả: " + (lopList == null ? "null" : lopList.size() + " lớp"));
             
             cboNamHoc.removeAllItems();

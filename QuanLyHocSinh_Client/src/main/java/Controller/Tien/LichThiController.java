@@ -6,20 +6,52 @@ import View.Tien.LichThiPanel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import TienIch.XuatExcel;
 import Model.Auth;
+import Model.MonHoc;
+import Model.PhongHoc;
+import Api.MonHocApiClient;
+import Api.PhongHocApiClient;
 
 public class LichThiController {
     
     private LichThiPanel view;
     private LichThiApi dao;
+    private List<MonHoc> monHocList;
     
     public LichThiController(LichThiPanel view) {
         this.view = view;
         this.dao = new LichThiApi();
+        loadComboBoxData();
         initEvents();
         loadAll();
+    }
+
+    private void loadComboBoxData() {
+        try {
+            List<String> kyThis = dao.getDistinctKyThi();
+            view.setKyThiData(kyThis);
+
+            MonHocApiClient monApi = new MonHocApiClient();
+            monHocList = monApi.getAll();
+            List<String> tenMons = new ArrayList<>();
+            for (MonHoc m : monHocList) {
+                tenMons.add(m.getTenMH());
+            }
+            view.setMonHocData(tenMons);
+
+            PhongHocApiClient phongApi = new PhongHocApiClient();
+            List<PhongHoc> phongs = phongApi.getAll();
+            List<String> tenPhongs = new ArrayList<>();
+            for (PhongHoc p : phongs) {
+                tenPhongs.add(p.getMaPhong());
+            }
+            view.setPhongHocData(tenPhongs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initEvents() {
@@ -29,6 +61,27 @@ public class LichThiController {
         Runnable setSelectedState = () -> view.setCrudButtonState(false, true, true, false, true);
         Runnable setEditState = () -> view.setCrudButtonState(false, true, true, true, true);
         setIdleState.run();
+
+        view.addBtnLocDanhSachListener(e -> {
+            String kyThi = view.getKyThiFilter();
+            String tenMon = view.getMonFilter();
+            String phong = view.getPhongFilter();
+            
+            String maMH = "";
+            if (!tenMon.isEmpty() && monHocList != null) {
+                for (MonHoc m : monHocList) {
+                    if (m.getTenMH().equals(tenMon)) {
+                        maMH = m.getMaMH();
+                        break;
+                    }
+                }
+            }
+            
+            List<LichThi> list = dao.getLichThiByFilter(kyThi, maMH, phong);
+            view.setTableData(list);
+            if (list.isEmpty()) view.showMessage("Không tìm thấy lịch thi phù hợp!");
+        });
+
         view.addBtnTimKiemListener(e -> {
             String kw = view.getKeyword();
             if(kw.isEmpty()) { 

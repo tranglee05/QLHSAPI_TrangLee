@@ -14,13 +14,15 @@ import TienIch.TableSortHelper;
 public class LichThiPanel extends JPanel {
 
     // --- Khai báo Component ---
-    // Phần tìm kiếm
+    // Phần tìm kiếm và lọc
     private JTextField txtTimKiem;
-    private JButton btnTimKiem, btnXemTatCa;
+    private JButton btnTimKiem, btnXemTatCa, btnLocDanhSach;
+    private JComboBox<String> cboLocKyThi, cboLocMon, cboLocPhong;
     
     // Phần bảng dữ liệu
     private JTable table;
     private DefaultTableModel model;
+    private List<LichThi> cachedList;
     
     // Nút chức năng đặc biệt
     private JButton btnXuatExcel;
@@ -52,10 +54,27 @@ public class LichThiPanel extends JPanel {
         lblTitle.setForeground(new Color(0, 102, 204));
         pnlNorth.add(lblTitle, BorderLayout.NORTH);
 
+        // Panel chứa Bộ Lọc
+        JPanel pnlFilter = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        pnlFilter.setBorder(new TitledBorder("Bộ Lọc Lịch Thi"));
+        
+        pnlFilter.add(new JLabel("Kỳ Thi:"));
+        cboLocKyThi = new JComboBox<>(); pnlFilter.add(cboLocKyThi);
+        
+        pnlFilter.add(new JLabel("Môn:"));
+        cboLocMon = new JComboBox<>(); pnlFilter.add(cboLocMon);
+        
+        pnlFilter.add(new JLabel("Phòng:"));
+        cboLocPhong = new JComboBox<>(); pnlFilter.add(cboLocPhong);
+        
+        btnLocDanhSach = new JButton("Lọc Danh Sách");
+        ButtonStyleHelper.styleButtonFilter(btnLocDanhSach);
+        pnlFilter.add(btnLocDanhSach);
+
         // Panel chứa ô tìm kiếm + nút
-        JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        pnlSearch.setBorder(new TitledBorder("Tìm kiếm"));
-        pnlSearch.add(new JLabel("Nhập Môn hoặc Kỳ thi:"));
+        JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        pnlSearch.setBorder(new TitledBorder("Tìm kiếm nhanh"));
+        pnlSearch.add(new JLabel("Nhập Tên Môn hoặc Kỳ thi:"));
         txtTimKiem = new JTextField(20); pnlSearch.add(txtTimKiem);
         
         btnTimKiem = new JButton("Tìm Kiếm");
@@ -64,11 +83,15 @@ public class LichThiPanel extends JPanel {
         ButtonStyleHelper.styleButtonView(btnXemTatCa);
         pnlSearch.add(btnTimKiem); pnlSearch.add(btnXemTatCa);
         
-        pnlNorth.add(pnlSearch, BorderLayout.CENTER);
+        JPanel pnlTools = new JPanel(new GridLayout(2, 1, 5, 5));
+        pnlTools.add(pnlFilter);
+        pnlTools.add(pnlSearch);
+
+        pnlNorth.add(pnlTools, BorderLayout.CENTER);
         add(pnlNorth, BorderLayout.NORTH);
 
         // 2. PHẦN GIỮA (CENTER): Bảng danh sách lịch thi
-        String[] cols = {"Mã LT", "Kỳ Thi", "Mã Môn", "Ngày Thi", "Bắt Đầu", "Kết Thúc", "Phòng"};
+        String[] cols = {"Mã LT", "Kỳ Thi", "Tên Môn", "Ngày Thi", "Bắt Đầu", "Kết Thúc", "Phòng"};
         model = new DefaultTableModel(cols, 0);
         table = new JTable(model);
         TableSortHelper.enableTableSorting(table);
@@ -184,8 +207,30 @@ public class LichThiPanel extends JPanel {
         setCrudButtonState(true, false, false, false, false);
     }
 
+    // --- Getter lấy thông tin bộ lọc ---
+    public String getKyThiFilter() { return cboLocKyThi.getSelectedItem() != null ? cboLocKyThi.getSelectedItem().toString() : ""; }
+    public String getMonFilter() { return cboLocMon.getSelectedItem() != null ? cboLocMon.getSelectedItem().toString() : ""; }
+    public String getPhongFilter() { return cboLocPhong.getSelectedItem() != null ? cboLocPhong.getSelectedItem().toString() : ""; }
+
     // --- Getter lấy từ khóa tìm kiếm ---
     public String getKeyword() { return txtTimKiem.getText().trim(); }
+    
+    // --- Các hàm Setter dữ liệu cho ComboBox Lọc ---
+    public void setKyThiData(List<String> list) {
+        cboLocKyThi.removeAllItems();
+        cboLocKyThi.addItem("");
+        for (String s : list) cboLocKyThi.addItem(s);
+    }
+    public void setMonHocData(List<String> list) {
+        cboLocMon.removeAllItems();
+        cboLocMon.addItem("");
+        for (String s : list) cboLocMon.addItem(s);
+    }
+    public void setPhongHocData(List<String> list) {
+        cboLocPhong.removeAllItems();
+        cboLocPhong.addItem("");
+        for (String s : list) cboLocPhong.addItem(s);
+    }
     
     // --- Đóng gói dữ liệu nhập thành Object LichThi ---
     public LichThi getLichThiInput() {
@@ -200,27 +245,36 @@ public class LichThiPanel extends JPanel {
         return lt;
     }
 
+    private String formatTime(String rawTime) {
+        if (rawTime == null) return "";
+        if (rawTime.length() >= 5) return rawTime.substring(0, 5); 
+        return rawTime;
+    }
+
     // --- Hiển thị danh sách lên bảng ---
     public void setTableData(List<LichThi> list) {
+        this.cachedList = list;
         model.setRowCount(0);
         for(LichThi lt : list) {
+            String tenMon = lt.getTenMH() != null && !lt.getTenMH().isEmpty() ? lt.getTenMH() : lt.getMaMH();
             model.addRow(new Object[]{
-                lt.getMaLT(), lt.getTenKyThi(), lt.getMaMH(), lt.getNgayThi(), 
-                lt.getGioBatDau(), lt.getGioKetThuc(), lt.getMaPhong()
+                lt.getMaLT(), lt.getTenKyThi(), tenMon, lt.getNgayThi(), 
+                formatTime(lt.getGioBatDau()), formatTime(lt.getGioKetThuc()), lt.getMaPhong()
             });
         }
     }
     
     // --- Click vào bảng -> Đổ dữ liệu ngược lại form ---
     public void fillForm(int row) {
-        if(row >= 0) {
-            txtMaLT.setText(model.getValueAt(row, 0).toString());
-            cboTenKyThi.setSelectedItem(model.getValueAt(row, 1).toString());
-            txtMaMH.setText(model.getValueAt(row, 2).toString());
-            txtNgayThi.setText(model.getValueAt(row, 3).toString());
-            txtGioBatDau.setText(model.getValueAt(row, 4).toString());
-            txtGioKetThuc.setText(model.getValueAt(row, 5).toString());
-            txtMaPhong.setText(model.getValueAt(row, 6).toString());
+        if(row >= 0 && cachedList != null && row < cachedList.size()) {
+            LichThi lt = cachedList.get(row);
+            txtMaLT.setText(String.valueOf(lt.getMaLT()));
+            cboTenKyThi.setSelectedItem(lt.getTenKyThi());
+            txtMaMH.setText(lt.getMaMH());
+            txtNgayThi.setText(lt.getNgayThi());
+            txtGioBatDau.setText(formatTime(lt.getGioBatDau()));
+            txtGioKetThuc.setText(formatTime(lt.getGioKetThuc()));
+            txtMaPhong.setText(lt.getMaPhong());
         }
     }
     
@@ -235,6 +289,7 @@ public class LichThiPanel extends JPanel {
     public JTable getTable() { return table; }
 
    // --- Gán sự kiện (Controller sẽ gọi mấy hàm này) ---
+    public void addBtnLocDanhSachListener(ActionListener ac) { btnLocDanhSach.addActionListener(ac); }
     public void addBtnTimKiemListener(ActionListener ac) { btnTimKiem.addActionListener(ac); }
     public void addBtnXemTatCaListener(ActionListener ac) { btnXemTatCa.addActionListener(ac); }
     public void addBtnThemListener(ActionListener ac) { btnThem.addActionListener(ac); }

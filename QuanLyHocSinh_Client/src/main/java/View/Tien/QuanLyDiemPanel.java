@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.util.List;
 import TienIch.ButtonStyleHelper;
-
+import javax.swing.table.DefaultTableCellRenderer;
 public class QuanLyDiemPanel extends JPanel {
 
     // --- Khai báo các Component ---
@@ -29,6 +29,7 @@ public class QuanLyDiemPanel extends JPanel {
     private JTextField txtTimKiem;
     private JButton btnTimKiem;
     private JButton btnXuatExcel;
+    private List<Model.MonHoc> monHocList;
 
     public QuanLyDiemPanel() {
         initComponents();
@@ -98,6 +99,19 @@ public class QuanLyDiemPanel extends JPanel {
         tableDiem.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         tableDiem.setRowHeight(25);
         tableDiem.getTableHeader().setDefaultRenderer(new TienIch.CustomTableHeaderRenderer());
+        
+        // Custom renderer cho cột Tổng Kết (index 8)
+        DefaultTableCellRenderer tongKetRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                c.setFont(new Font("Segoe UI", Font.BOLD, 14));
+                c.setForeground(Color.RED);
+                return c;
+            }
+        };
+        tableDiem.getColumnModel().getColumn(8).setCellRenderer(tongKetRenderer);
+        
         this.add(new JScrollPane(tableDiem), BorderLayout.CENTER);
 
         // 3. PHẦN DƯỚI (SOUTH): Form Cập Nhật + Nút Bấm
@@ -159,7 +173,15 @@ public class QuanLyDiemPanel extends JPanel {
         return cboLocMaLop.getSelectedItem() != null ? cboLocMaLop.getSelectedItem().toString() : ""; 
     }
     public String getMaMonFilter() { 
-        return cboLocMon.getSelectedItem() != null ? cboLocMon.getSelectedItem().toString() : ""; 
+        String tenMonSelected = cboLocMon.getSelectedItem() != null ? cboLocMon.getSelectedItem().toString() : "";
+        if (monHocList != null) {
+            for (Model.MonHoc m : monHocList) {
+                if (m.getTenMH().equals(tenMonSelected)) {
+                    return m.getMaMH();
+                }
+            }
+        }
+        return ""; 
     }
     public int getHocKyFilter() { 
         try {
@@ -178,10 +200,11 @@ public class QuanLyDiemPanel extends JPanel {
         }
     }
 
-    public void setMonHocData(List<String> mons) {
+    public void setMonHocData(List<Model.MonHoc> mons) {
+        this.monHocList = mons;
         cboLocMon.removeAllItems();
-        for (String mon : mons) {
-            cboLocMon.addItem(mon);
+        for (Model.MonHoc mon : mons) {
+            cboLocMon.addItem(mon.getTenMH());
         }
     }
 

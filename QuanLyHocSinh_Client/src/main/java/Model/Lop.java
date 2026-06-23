@@ -1,9 +1,15 @@
 package Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Lop {
+    @SerializedName(value = "maLop", alternate = {"MaLop", "MALOP", "malop"})
     private String maLop;
+    @SerializedName(value = "tenLop", alternate = {"TenLop", "TENLOP", "tenlop"})
     private String tenLop;
+    @SerializedName(value = "nienKhoa", alternate = {"NienKhoa", "NIENKHOA", "nienkhoa"})
     private String nienKhoa;
+    @SerializedName(value = "maGVCN", alternate = {"MaGVCN", "MAGVCN", "magvcn"})
     private String maGVCN;
 
     public Lop() { }

@@ -1,113 +1,160 @@
 package Api;
 
-import Connection.ConnectDB;
 import Model.LichThi;
-import java.sql.*;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.reflect.Type;
 
 public class LichThiApi {
 
+    private static final String BASE_URL = "http://localhost:8080/api/lichthi";
+    private HttpClient client;
+    private Gson gson;
+
+    public LichThiApi() {
+        client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
+        gson = new Gson();
+    }
 
     public List<LichThi> getAllLichThi() {
-        List<LichThi> list = new ArrayList<>();
-        String sql = "SELECT * FROM LichThi"; 
-        
-        try (Connection conn = ConnectDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            
-            while (rs.next()) {
-                LichThi lt = new LichThi();
-                lt.setMaLT(rs.getInt("MaLT"));
-                lt.setTenKyThi(rs.getString("TenKyThi"));
-                lt.setMaMH(rs.getString("MaMH"));
-                lt.setNgayThi(rs.getString("NgayThi"));
-           
-                lt.setGioBatDau(formatTime(rs.getString("GioBatDau")));
-                lt.setGioKetThuc(formatTime(rs.getString("GioKetThuc")));
-                
-                lt.setMaPhong(rs.getString("MaPhong"));
-                list.add(lt);
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                Type type = new TypeToken<List<LichThi>>(){}.getType();
+                return gson.fromJson(response.body(), type);
             }
-        } catch (Exception e) { e.printStackTrace(); }
-        return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     public List<LichThi> searchLichThi(String keyword) {
-        List<LichThi> list = new ArrayList<>();
-        String sql = "SELECT * FROM LichThi WHERE TenKyThi LIKE ? OR MaMH LIKE ?";
-        try (Connection conn = ConnectDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            String key = "%" + keyword + "%";
-            ps.setString(1, key);
-            ps.setString(2, key);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                LichThi lt = new LichThi();
-                lt.setMaLT(rs.getInt("MaLT"));
-                lt.setTenKyThi(rs.getString("TenKyThi"));
-                lt.setMaMH(rs.getString("MaMH"));
-                lt.setNgayThi(rs.getString("NgayThi"));
-                
-
-                lt.setGioBatDau(formatTime(rs.getString("GioBatDau")));
-                lt.setGioKetThuc(formatTime(rs.getString("GioKetThuc")));
-                
-                lt.setMaPhong(rs.getString("MaPhong"));
-                list.add(lt);
+        try {
+            String url = String.format("%s/search?keyword=%s",
+                    BASE_URL,
+                    URLEncoder.encode(keyword, StandardCharsets.UTF_8));
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                Type type = new TypeToken<List<LichThi>>(){}.getType();
+                return gson.fromJson(response.body(), type);
             }
-        } catch (Exception e) { e.printStackTrace(); }
-        return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
+    public List<String> getDistinctKyThi() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/kythi"))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                Type type = new TypeToken<List<String>>(){}.getType();
+                return gson.fromJson(response.body(), type);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<LichThi> getLichThiByFilter(String kyThi, String maMH, String maPhong) {
+        try {
+            String url = String.format("%s/filter?kyThi=%s&maMH=%s&maPhong=%s",
+                    BASE_URL,
+                    URLEncoder.encode(kyThi, StandardCharsets.UTF_8),
+                    URLEncoder.encode(maMH, StandardCharsets.UTF_8),
+                    URLEncoder.encode(maPhong, StandardCharsets.UTF_8));
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                Type type = new TypeToken<List<LichThi>>(){}.getType();
+                return gson.fromJson(response.body(), type);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
 
     private String formatTime(String rawTime) {
         if (rawTime == null) return "";
-      
         if (rawTime.length() >= 5) {
             return rawTime.substring(0, 5); 
         }
         return rawTime;
     }
 
-
-    
     public boolean addLichThi(LichThi lt) {
-        String sql = "INSERT INTO LichThi(TenKyThi, MaMH, NgayThi, GioBatDau, GioKetThuc, MaPhong) VALUES (?,?,?,?,?,?)";
-        try (Connection conn = ConnectDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, lt.getTenKyThi());
-            ps.setString(2, lt.getMaMH());
-            ps.setString(3, lt.getNgayThi());
-            ps.setString(4, lt.getGioBatDau());
-            ps.setString(5, lt.getGioKetThuc());
-            ps.setString(6, lt.getMaPhong());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) { e.printStackTrace(); return false; }
+        try {
+            String json = gson.toJson(lt);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.statusCode() == 200;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean updateLichThi(LichThi lt) {
-        String sql = "UPDATE LichThi SET TenKyThi=?, MaMH=?, NgayThi=?, GioBatDau=?, GioKetThuc=?, MaPhong=? WHERE MaLT=?";
-        try (Connection conn = ConnectDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, lt.getTenKyThi());
-            ps.setString(2, lt.getMaMH());
-            ps.setString(3, lt.getNgayThi());
-            ps.setString(4, lt.getGioBatDau());
-            ps.setString(5, lt.getGioKetThuc());
-            ps.setString(6, lt.getMaPhong());
-            ps.setInt(7, lt.getMaLT());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) { e.printStackTrace(); return false; }
+        try {
+            String json = gson.toJson(lt);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/" + lt.getMaLT()))
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.statusCode() == 200;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean deleteLichThi(int maLT) {
-        String sql = "DELETE FROM LichThi WHERE MaLT=?";
-        try (Connection conn = ConnectDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, maLT);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) { return false; }
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/" + maLT))
+                    .DELETE()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.statusCode() == 200;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

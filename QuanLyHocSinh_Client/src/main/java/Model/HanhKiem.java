@@ -1,12 +1,21 @@
 package Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class HanhKiem {
+    @SerializedName(value = "maHS", alternate = {"MaHS", "MAHS", "mahs"})
     private String maHS;
-    private String tenHS; 
+    @SerializedName(value = "tenHS", alternate = {"TenHS", "TENHS", "tenhs"})
+    private String tenHS;
+    @SerializedName(value = "maLop", alternate = {"MaLop", "MALOP", "malop", "lopHocSinh", "LopHocSinh"})
     private String maLop;
+    @SerializedName(value = "hocKy", alternate = {"HocKy", "HOCKY", "hocky"})
     private int hocKy;
+    @SerializedName(value = "namHoc", alternate = {"NamHoc", "NAMHOC", "namhoc"})
     private String namHoc;
+    @SerializedName(value = "xepLoai", alternate = {"XepLoai", "XEPLOAI", "xeploai"})
     private String xepLoai;
+    @SerializedName(value = "nhanXet", alternate = {"NhanXet", "NHANXET", "nhanxet"})
     private String nhanXet;
 
     public HanhKiem() {}
