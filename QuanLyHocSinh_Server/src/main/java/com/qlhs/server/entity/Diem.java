@@ -44,4 +44,7 @@ public class Diem {
 
     @Column(name = "DiemCuoiKy")
     private double diemCuoiKy;
+
+    @Column(name = "DiemTongKet")
+    private double diemTongKet;
 }

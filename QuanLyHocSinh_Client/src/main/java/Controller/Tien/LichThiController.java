@@ -20,6 +20,7 @@ public class LichThiController {
     private LichThiPanel view;
     private LichThiApi dao;
     private List<MonHoc> monHocList;
+    private List<PhongHoc> phongHocList;
     
     public LichThiController(LichThiPanel view) {
         this.view = view;
@@ -43,10 +44,10 @@ public class LichThiController {
             view.setMonHocData(tenMons);
 
             PhongHocApiClient phongApi = new PhongHocApiClient();
-            List<PhongHoc> phongs = phongApi.getAll();
+            phongHocList = phongApi.getAll();
             List<String> tenPhongs = new ArrayList<>();
-            for (PhongHoc p : phongs) {
-                tenPhongs.add(p.getMaPhong());
+            for (PhongHoc p : phongHocList) {
+                tenPhongs.add(p.getTenPhong()); // Hiển thị tên phòng thay vì mã
             }
             view.setPhongHocData(tenPhongs);
         } catch (Exception e) {
@@ -99,7 +100,36 @@ public class LichThiController {
             editMode[0] = false;
             view.clearForm();
             view.getTable().clearSelection();
+            
+            // Auto đề xuất Mã LT tiếp theo
+            int maxId = 0;
+            for(int i=0; i<view.getTable().getRowCount(); i++) {
+                try {
+                    int id = Integer.parseInt(view.getTable().getValueAt(i, 0).toString());
+                    if (id > maxId) maxId = id;
+                } catch(Exception ex) {}
+            }
+            view.getCboMaLT().getEditor().setItem(String.valueOf(maxId + 1));
+            
             setAddState.run();
+        });
+        
+        view.getCboMaLT().addActionListener(e -> {
+            String selected = "";
+            if (view.getCboMaLT().getSelectedItem() != null) {
+                selected = view.getCboMaLT().getSelectedItem().toString();
+            }
+            if(!selected.isEmpty()) {
+                // Tìm trong bảng xem mã này có tồn tại không
+                for(int i=0; i<view.getTable().getRowCount(); i++) {
+                    if(view.getTable().getValueAt(i, 0).toString().equals(selected)) {
+                        view.getTable().setRowSelectionInterval(i, i);
+                        // Khi setRowSelectionInterval thì tableMouseListener sẽ tự kích hoạt
+                        // và fill data + chuyển sang EditMode
+                        break;
+                    }
+                }
+            }
         });
         view.addBtnSuaListener(e -> {
             int row = view.getTable().getSelectedRow();
@@ -113,8 +143,43 @@ public class LichThiController {
         });
         view.addBtnLuuListener(e -> {
             LichThi lt = view.getLichThiInput();
+            
+            // Map TenMH -> MaMH
+            if (!lt.getMaMH().isEmpty() && monHocList != null) {
+                for (MonHoc m : monHocList) {
+                    if (m.getTenMH().equals(lt.getMaMH())) {
+                        lt.setMaMH(m.getMaMH());
+                        break;
+                    }
+                }
+            }
+            
+            // Map TenPhong -> MaPhong
+            if (!lt.getMaPhong().isEmpty() && phongHocList != null) {
+                for (PhongHoc p : phongHocList) {
+                    if (p.getTenPhong() != null && p.getTenPhong().equals(lt.getMaPhong())) {
+                        lt.setMaPhong(p.getMaPhong());
+                        break;
+                    }
+                }
+            }
+
             if (lt.getMaMH().isEmpty() || lt.getNgayThi().isEmpty()) {
                 view.showMessage("Vui lòng nhập Mã môn và Ngày thi!");
+                return;
+            }
+            
+            // Validate Giờ Bắt Đầu < Giờ Kết Thúc
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm");
+                java.util.Date start = sdf.parse(lt.getGioBatDau());
+                java.util.Date end = sdf.parse(lt.getGioKetThuc());
+                if (!start.before(end)) {
+                    view.showMessage("Lỗi: Giờ kết thúc phải lớn hơn giờ bắt đầu!");
+                    return;
+                }
+            } catch (Exception ex) {
+                view.showMessage("Lỗi định dạng giờ!");
                 return;
             }
             if (editMode[0]) {
@@ -184,6 +249,13 @@ public class LichThiController {
         });
     }
     private void loadAll() {
-        view.setTableData(dao.getAllLichThi());
+        List<LichThi> all = dao.getAllLichThi();
+        view.setTableData(all);
+        
+        List<Integer> listMaLT = new ArrayList<>();
+        for(LichThi lt : all) {
+            listMaLT.add(lt.getMaLT());
+        }
+        view.setMaLTData(listMaLT);
     }
 }

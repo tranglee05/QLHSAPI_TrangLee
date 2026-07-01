@@ -2,6 +2,8 @@ package com.qlhs.server.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "LichThi")
@@ -22,13 +24,13 @@ public class LichThi {
     private String maMH;
 
     @Column(name = "NgayThi")
-    private String ngayThi;
+    private LocalDate ngayThi;
 
     @Column(name = "GioBatDau")
-    private String gioBatDau;
+    private LocalTime gioBatDau;
 
     @Column(name = "GioKetThuc")
-    private String gioKetThuc;
+    private LocalTime gioKetThuc;
 
     @Column(name = "MaPhong", length = 50)
     private String maPhong;

@@ -185,9 +185,9 @@ public class QuanLyDiemPanel extends JPanel {
     }
     public int getHocKyFilter() { 
         try {
-            return cboLocHocKy.getSelectedItem() != null ? Integer.parseInt(cboLocHocKy.getSelectedItem().toString()) : 1;
+            return cboLocHocKy.getSelectedItem() != null && !cboLocHocKy.getSelectedItem().toString().isEmpty() ? Integer.parseInt(cboLocHocKy.getSelectedItem().toString()) : 0;
         } catch (Exception e) {
-            return 1;
+            return 0;
         }
     }
     public String getTuKhoaTimKiem() { return txtTimKiem.getText().trim(); }
@@ -195,6 +195,7 @@ public class QuanLyDiemPanel extends JPanel {
     // --- Các hàm Setter dữ liệu cho ComboBox ---
     public void setMaLopData(List<String> lops) {
         cboLocMaLop.removeAllItems();
+        cboLocMaLop.addItem("");
         for (String lop : lops) {
             cboLocMaLop.addItem(lop);
         }
@@ -203,6 +204,7 @@ public class QuanLyDiemPanel extends JPanel {
     public void setMonHocData(List<Model.MonHoc> mons) {
         this.monHocList = mons;
         cboLocMon.removeAllItems();
+        cboLocMon.addItem("");
         for (Model.MonHoc mon : mons) {
             cboLocMon.addItem(mon.getTenMH());
         }
@@ -210,6 +212,7 @@ public class QuanLyDiemPanel extends JPanel {
 
     public void setHocKyData(List<Integer> hks) {
         cboLocHocKy.removeAllItems();
+        cboLocHocKy.addItem("");
         for (Integer hk : hks) {
             cboLocHocKy.addItem(hk.toString());
         }

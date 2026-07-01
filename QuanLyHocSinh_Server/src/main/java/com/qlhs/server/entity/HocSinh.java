@@ -2,6 +2,7 @@ package com.qlhs.server.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "HocSinh")
@@ -18,7 +19,7 @@ public class HocSinh {
     private String hoTen;
 
     @Column(name = "ngaySinh")
-    private String ngaySinh;
+    private LocalDate ngaySinh;
 
     @Column(name = "gioiTinh", columnDefinition = "NVARCHAR(10)")
     private String gioiTinh;

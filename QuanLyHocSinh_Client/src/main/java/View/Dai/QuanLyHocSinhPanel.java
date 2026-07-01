@@ -142,7 +142,7 @@ public class QuanLyHocSinhPanel extends JPanel {
         gbc.gridx = 1;
   
         spNgaySinh = new JSpinner(new SpinnerDateModel());
-        spNgaySinh.setEditor(new JSpinner.DateEditor(spNgaySinh, "yyyy-MM-dd"));
+        spNgaySinh.setEditor(new JSpinner.DateEditor(spNgaySinh, "dd/MM/yyyy"));
         pnlLeft.add(spNgaySinh, gbc);
         
 
@@ -329,7 +329,7 @@ public class QuanLyHocSinhPanel extends JPanel {
             try {
                 String strDate = tableModel.getValueAt(r, 2).toString();
          
-                Date d = new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
+                Date d = new SimpleDateFormat("dd/MM/yyyy").parse(strDate);
                 spNgaySinh.setValue(d);
             } catch (Exception e) {
            

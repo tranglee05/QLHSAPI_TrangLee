@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class PhongHocApiClient {
-    private static final String BASE_URL = "http://26.44.245.147:8080/api/phonghoc";
+    private static final String BASE_URL = ApiConfig.BASE_URL + "/api/phonghoc";
     private final HttpClient client = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
 

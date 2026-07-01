@@ -22,7 +22,7 @@ public interface DiemRepository extends JpaRepository<Diem, Diem.DiemId> {
     @Query(value = BASE_QUERY, nativeQuery = true)
     List<Map<String, Object>> findAllDiemWithDetails();
 
-    @Query(value = BASE_QUERY + "WHERE hs.MaLop = :maLop AND d.MaMH = :maMH AND d.HocKy = :hocKy", nativeQuery = true)
+    @Query(value = BASE_QUERY + "WHERE (:maLop = '' OR hs.MaLop = :maLop) AND (:maMH = '' OR d.MaMH = :maMH) AND (:hocKy = 0 OR d.HocKy = :hocKy)", nativeQuery = true)
     List<Map<String, Object>> findDiemByFilter(@Param("maLop") String maLop, @Param("maMH") String maMH, @Param("hocKy") int hocKy);
 
     @Query(value = BASE_QUERY + "WHERE d.MaHS LIKE %:keyword% OR hs.HoTen LIKE %:keyword%", nativeQuery = true)

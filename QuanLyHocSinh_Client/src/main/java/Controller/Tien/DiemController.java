@@ -93,7 +93,7 @@ public class DiemController {
         String keyword = view.getTuKhoaTimKiem();
 
         if (keyword.isEmpty()) {
-            view.showMessage("Nhập tên hoặc mã HS để tìm kiếm nhé!");
+            loadData(); // Nếu để trống thì tải lại toàn bộ
             return;
         }
 
@@ -118,11 +118,14 @@ public class DiemController {
 
         } else {
             String maLop = view.getMaLopFilter();
-            if (maLop.isEmpty()) return;
-
             String maMon = view.getMaMonFilter();
             int hocKy = view.getHocKyFilter();
-            list = dao.getDiemByFilter(maLop, maMon, hocKy);
+            
+            if (maLop.isEmpty() && maMon.isEmpty() && hocKy == 0) {
+                list = dao.getAll();
+            } else {
+                list = dao.getDiemByFilter(maLop, maMon, hocKy);
+            }
         }
         view.setTableData(list);
     }

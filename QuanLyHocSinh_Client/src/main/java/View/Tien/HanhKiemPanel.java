@@ -17,7 +17,7 @@ public class HanhKiemPanel extends JPanel {
     private JButton btnXuatExcel;
     // Bộ lọc và tìm kiếm
     private JTextField txtTimKiem; 
-    private JComboBox<String> cboLocMaLop, cboLocNamHoc, cboHocKy, cboXepLoai;
+    private JComboBox<String> cboLocMaLop, cboLocNamHoc, cboLocHocKy;
     
     // Bảng hiển thị
     private JTable table;
@@ -28,6 +28,7 @@ public class HanhKiemPanel extends JPanel {
     // Form nhập liệu chi tiết
     private JTextField txtMaHS, txtTenHS;
     private JTextArea txtNhanXet;
+    private JComboBox<String> cboMaLopInput, cboNamHocInput, cboHocKyInput, cboXepLoai;
 
     public HanhKiemPanel() {
         initComponents();
@@ -68,9 +69,9 @@ public class HanhKiemPanel extends JPanel {
         pnlFilter.add(cboLocNamHoc);
         
         pnlFilter.add(new JLabel("Học Kỳ:"));
-        cboHocKy = new JComboBox<>(new String[]{"", "1", "2"}); 
-        cboHocKy.setSelectedIndex(0);
-        pnlFilter.add(cboHocKy);
+        cboLocHocKy = new JComboBox<>(new String[]{"", "1", "2"}); 
+        cboLocHocKy.setSelectedIndex(0);
+        pnlFilter.add(cboLocHocKy);
         
         btnXem = new JButton("Lọc Danh Sách");
         ButtonStyleHelper.styleButtonFilter(btnXem);
@@ -118,21 +119,34 @@ public class HanhKiemPanel extends JPanel {
 
         // Dòng 1: Mã HS + Tên HS
         gbc.gridx=0; gbc.gridy=0; pnlInput.add(new JLabel("Mã HS:"), gbc);
-        gbc.gridx=1; gbc.gridy=0; txtMaHS = new JTextField(15); txtMaHS.setEditable(false); pnlInput.add(txtMaHS, gbc);
+        gbc.gridx=1; gbc.gridy=0; txtMaHS = new JTextField(15); pnlInput.add(txtMaHS, gbc);
         
         gbc.gridx=2; gbc.gridy=0; pnlInput.add(new JLabel("Tên HS:"), gbc);
         gbc.gridx=3; gbc.gridy=0; txtTenHS = new JTextField(15); txtTenHS.setEditable(false); pnlInput.add(txtTenHS, gbc);
         
-        // Dòng 2: Xếp loại
-        gbc.gridx=0; gbc.gridy=1; pnlInput.add(new JLabel("Xếp Loại:"), gbc);
+        // Dòng 2: Mã Lớp + Năm Học
+        gbc.gridx=0; gbc.gridy=1; pnlInput.add(new JLabel("Mã Lớp:"), gbc);
         gbc.gridx=1; gbc.gridy=1; 
+        cboMaLopInput = new JComboBox<>(); pnlInput.add(cboMaLopInput, gbc);
+        
+        gbc.gridx=2; gbc.gridy=1; pnlInput.add(new JLabel("Năm Học:"), gbc);
+        gbc.gridx=3; gbc.gridy=1; 
+        cboNamHocInput = new JComboBox<>(); cboNamHocInput.setEditable(true); pnlInput.add(cboNamHocInput, gbc);
+
+        // Dòng 3: Học Kỳ + Xếp loại
+        gbc.gridx=0; gbc.gridy=2; pnlInput.add(new JLabel("Học Kỳ:"), gbc);
+        gbc.gridx=1; gbc.gridy=2; 
+        cboHocKyInput = new JComboBox<>(new String[]{"1", "2"}); pnlInput.add(cboHocKyInput, gbc);
+
+        gbc.gridx=2; gbc.gridy=2; pnlInput.add(new JLabel("Xếp Loại:"), gbc);
+        gbc.gridx=3; gbc.gridy=2; 
         cboXepLoai = new JComboBox<>(new String[]{"", "Tốt", "Khá", "Trung bình", "Yếu"}); 
         pnlInput.add(cboXepLoai, gbc);
         
-        // Dòng 3: Nhận xét mở rộng
-        gbc.gridx=0; gbc.gridy=2; pnlInput.add(new JLabel("Nhận Xét:"), gbc);
-        gbc.gridx=1; gbc.gridy=2; gbc.gridwidth=3;
-        txtNhanXet = new JTextArea(4, 40); // Tăng kích thước khu vực nhận xét
+        // Dòng 4: Nhận xét mở rộng
+        gbc.gridx=0; gbc.gridy=3; pnlInput.add(new JLabel("Nhận Xét:"), gbc);
+        gbc.gridx=1; gbc.gridy=3; gbc.gridwidth=3;
+        txtNhanXet = new JTextArea(3, 40);
         txtNhanXet.setLineWrap(true);
         txtNhanXet.setWrapStyleWord(true);
         pnlInput.add(new JScrollPane(txtNhanXet), gbc);
@@ -191,31 +205,38 @@ public class HanhKiemPanel extends JPanel {
     }
     public int getHocKyFilter() { 
         try {
-            return Integer.parseInt(cboHocKy.getSelectedItem().toString());
-        } catch(Exception e) { return 1; }
+            return cboLocHocKy.getSelectedItem() != null && !cboLocHocKy.getSelectedItem().toString().isEmpty() ? Integer.parseInt(cboLocHocKy.getSelectedItem().toString()) : 0;
+        } catch(Exception e) { return 0; }
     }
     public String getTuKhoaTimKiem() { return txtTimKiem.getText().trim(); } 
     
     // --- Các hàm Setter dữ liệu cho ComboBox ---
     public void setMaLopData(List<String> lops) {
         cboLocMaLop.removeAllItems();
+        cboMaLopInput.removeAllItems();
+        cboLocMaLop.addItem("");
         for (String lop : lops) {
             cboLocMaLop.addItem(lop);
+            cboMaLopInput.addItem(lop);
         }
     }
 
     public void setNamHocData(List<String> namHocs) {
         cboLocNamHoc.removeAllItems();
+        cboNamHocInput.removeAllItems();
+        cboLocNamHoc.addItem("");
         for (String n : namHocs) {
             cboLocNamHoc.addItem(n);
+            cboNamHocInput.addItem(n);
         }
     }
 
     public HanhKiem getHanhKiemInput() {
         HanhKiem hk = new HanhKiem();
         hk.setMaHS(txtMaHS.getText());
-        hk.setNamHoc(getNamHocFilter());
-        hk.setHocKy(getHocKyFilter());
+        hk.setMaLop(cboMaLopInput.getSelectedItem() != null ? cboMaLopInput.getSelectedItem().toString() : "");
+        hk.setNamHoc(cboNamHocInput.getSelectedItem() != null ? cboNamHocInput.getSelectedItem().toString() : "");
+        hk.setHocKy(Integer.parseInt(cboHocKyInput.getSelectedItem().toString()));
         hk.setXepLoai(cboXepLoai.getSelectedItem().toString());
         hk.setNhanXet(txtNhanXet.getText());
         return hk;
@@ -230,19 +251,21 @@ public class HanhKiemPanel extends JPanel {
         }
     }
     
-    // Khi click vào bảng -> Đổ dữ liệu ngược lại form nhập
     public void fillFormInput(int row) {
         if(row >= 0) {
             txtMaHS.setText(model.getValueAt(row, 0).toString());
             txtTenHS.setText(model.getValueAt(row, 1).toString());
             
+            String maLop = model.getValueAt(row, 2) != null ? model.getValueAt(row, 2).toString() : "";
+            cboMaLopInput.setSelectedItem(maLop);
+            
             String namHoc = model.getValueAt(row, 3).toString();
             String hocKy = model.getValueAt(row, 4).toString();
-            cboLocNamHoc.setSelectedItem(namHoc);
-            cboHocKy.setSelectedItem(hocKy);
+            cboNamHocInput.setSelectedItem(namHoc);
+            cboHocKyInput.setSelectedItem(hocKy);
             
-            String xepLoai = model.getValueAt(row, 5).toString();
-            if(xepLoai != null && !xepLoai.isEmpty()) {
+            String xepLoai = model.getValueAt(row, 5) != null ? model.getValueAt(row, 5).toString() : "";
+            if(!xepLoai.isEmpty()) {
                 cboXepLoai.setSelectedItem(xepLoai);
             } else {
                 cboXepLoai.setSelectedIndex(0);
@@ -256,17 +279,6 @@ public class HanhKiemPanel extends JPanel {
         txtMaHS.setText("");
         txtTenHS.setText("");
         txtNhanXet.setText("");
-        
-        // Set ComboBox về giá trị mặc định (index 0)
-        if (cboLocNamHoc.getItemCount() > 0) {
-            cboLocNamHoc.setSelectedIndex(0);
-        }
-        if (cboHocKy.getItemCount() > 0) {
-            cboHocKy.setSelectedIndex(0);
-        }
-        if (cboXepLoai.getItemCount() > 0) {
-            cboXepLoai.setSelectedIndex(0);
-        }
         
         // Bỏ chọn bảng
         if (table != null) {
@@ -295,12 +307,35 @@ public class HanhKiemPanel extends JPanel {
     public JButton getBtnXoa() { return btnXoa; }
     public JButton getBtnLuu() { return btnLuu; }
     public JButton getBtnHuy() { return btnHuy; }
+    
+    // Thêm hàm expose txtMaHS
+    public String getMaHSInput() { return txtMaHS.getText().trim(); }
+    public void setTenHS(String ten) { txtTenHS.setText(ten); }
+    public void addMaHS(java.awt.event.FocusAdapter adapter) { txtMaHS.addFocusListener(adapter); }
+    
+    public void setFormEnabled(boolean enabled) {
+        cboMaLopInput.setEnabled(enabled);
+        cboNamHocInput.setEnabled(enabled);
+        cboHocKyInput.setEnabled(enabled);
+        cboXepLoai.setEnabled(enabled);
+        txtNhanXet.setEditable(enabled);
+    }
+    
     public void setCrudButtonState(boolean them, boolean sua, boolean xoa, boolean luu, boolean huy) {
         btnThem.setEnabled(them);
         btnSua.setEnabled(sua);
         btnXoa.setEnabled(xoa);
         btnLuu.setEnabled(luu);
         btnHuy.setEnabled(huy);
+        
+        // UX logic: txtMaHS chỉ editable khi ấn nút Thêm, nếu ấn nút Sửa thì không cho edit mã
+        if (luu && !sua && !xoa) {
+            txtMaHS.setEditable(true);
+        } else {
+            txtMaHS.setEditable(false);
+        }
+        
+        setFormEnabled(luu); // Form chỉ mở khi đang ở chế độ Lưu/Huỷ (Thêm/Sửa đang diễn ra)
     }
 
     public void hideButtonForStudent() {

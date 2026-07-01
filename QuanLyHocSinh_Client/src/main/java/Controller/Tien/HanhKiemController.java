@@ -127,6 +127,21 @@ public class HanhKiemController {
         view.addBtnXuatExcelListener(e -> {
             XuatExcel.xuatFileExcel(view.getTable(), view);
         });
+        view.addMaHS(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                String maHS = view.getMaHSInput();
+                if (!maHS.isEmpty()) {
+                    // TODO: Gọi API lấy Học Sinh để lấy Tên HS theo MaHS
+                    // Ví dụ: view.setTenHS(hocSinhApi.getHocSinhByMa(maHS).getTenHS());
+                    // Tạm thời nếu có thể lấy từ bảng Hạnh Kiểm đã load:
+                    List<HanhKiem> list = dao.searchHanhKiemByMaHS(maHS, "");
+                    if(list != null && !list.isEmpty()) {
+                        view.setTenHS(list.get(0).getTenHS());
+                    }
+                }
+            }
+        });
     }
     private void loadData() {
         try {
@@ -142,8 +157,7 @@ public class HanhKiemController {
             String maLop = view.getMaLopFilter();
             String namHoc = view.getNamHocFilter();
             int hocKy = view.getHocKyFilter();
-                if (maLop.isEmpty() || namHoc.isEmpty()) return;
-                list = dao.getHanhKiemByFilter(maLop, namHoc, hocKy);
+            list = dao.getHanhKiemByFilter(maLop, namHoc, hocKy);
             }
             view.setTableData(list);
             

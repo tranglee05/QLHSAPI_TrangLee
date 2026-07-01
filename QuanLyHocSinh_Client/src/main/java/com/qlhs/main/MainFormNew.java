@@ -222,7 +222,7 @@ public class MainFormNew extends JFrame {
         iconMap.put("room.png", "🏫"); iconMap.put("score.png", "📊");
         iconMap.put("conduct.png", "⭐"); iconMap.put("exam.png", "📝");
         iconMap.put("fee.png", "💰"); iconMap.put("notification.png", "📢");
-        iconMap.put("review.png", "⚖️"); iconMap.put("student.png", "👤");
+        iconMap.put("review.png", "🔎"); iconMap.put("student.png", "👤");
         iconMap.put("user.png", "🔐"); iconMap.put("policy.png", "📋");
 
         String emoji = iconMap.getOrDefault(iconFileName, "•");

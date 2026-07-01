@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiemApi {
-    private static final String SERVER_URL = "http://26.44.245.147:8080/api/diem";
+    private static final String BASE_URL = ApiConfig.BASE_URL + "/api/diem";
     private HttpClient client;
     private Gson gson;
 
@@ -29,7 +29,7 @@ public class DiemApi {
     public List<Diem> getAll() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(SERVER_URL))
+                    .uri(URI.create(BASE_URL))
                     .GET()
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -45,7 +45,7 @@ public class DiemApi {
     public List<Diem> getDiemByFilter(String maLop, String maMH, int hocKy) {
         try {
             String url = String.format("%s/filter?maLop=%s&maMH=%s&hocKy=%d", 
-                SERVER_URL,
+                BASE_URL,
                 URLEncoder.encode(maLop, StandardCharsets.UTF_8),
                 URLEncoder.encode(maMH, StandardCharsets.UTF_8),
                 hocKy);
@@ -68,7 +68,7 @@ public class DiemApi {
         try {
             String jsonBody = gson.toJson(d);
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(SERVER_URL))
+                    .uri(URI.create(BASE_URL))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
@@ -83,7 +83,7 @@ public class DiemApi {
     public List<Diem> searchDiem(String keyword) {
         try {
             String url = String.format("%s/search?keyword=%s", 
-                SERVER_URL,
+                BASE_URL,
                 URLEncoder.encode(keyword, StandardCharsets.UTF_8));
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -102,7 +102,7 @@ public class DiemApi {
     public List<Integer> getDistinctHocKy() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(SERVER_URL + "/hocky"))
+                    .uri(URI.create(BASE_URL + "/hocky"))
                     .GET()
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -118,7 +118,7 @@ public class DiemApi {
     public List<Diem> getDiemByMaHS(String maHS) {
         try {
             String url = String.format("%s/hocsinh/%s", 
-                SERVER_URL,
+                BASE_URL,
                 URLEncoder.encode(maHS, StandardCharsets.UTF_8));
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))

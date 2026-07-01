@@ -150,7 +150,7 @@ public class TaiKhoanApi {
 
             // Tạo request gửi đến Server Spring Boot
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://26.44.245.147:8080/api/taikhoan/login"))
+                    .uri(URI.create(ApiConfig.BASE_URL + "/api/taikhoan/login"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonRequest))
                     .build();

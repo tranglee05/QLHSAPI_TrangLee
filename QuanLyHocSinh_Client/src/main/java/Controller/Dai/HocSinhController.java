@@ -35,12 +35,22 @@ public class HocSinhController {
             model.addRow(new Object[]{
                     hs.getMaHS(),
                     hs.getHoTen(),
-                    hs.getNgaySinh(),
+                    formatToDDMMYYYY(hs.getNgaySinh()),
                     hs.getGioiTinh(),
                     hs.getDiaChi(),
                     hs.getMaLop(),
                     hs.getMaDT()
             });
+        }
+    }
+
+    private String formatToDDMMYYYY(String yyyyMMdd) {
+        if (yyyyMMdd == null || yyyyMMdd.isEmpty()) return "";
+        try {
+            java.util.Date d = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(yyyyMMdd);
+            return new java.text.SimpleDateFormat("dd/MM/yyyy").format(d);
+        } catch (Exception e) {
+            return yyyyMMdd;
         }
     }
 
@@ -82,7 +92,7 @@ public class HocSinhController {
             model.addRow(new Object[]{
                 hs.getMaHS(),
                 hs.getHoTen(),
-                hs.getNgaySinh(),
+                formatToDDMMYYYY(hs.getNgaySinh()),
                 hs.getGioiTinh(),
                 hs.getDiaChi(),
                 hs.getMaLop(),

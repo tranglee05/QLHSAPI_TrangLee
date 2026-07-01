@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LopApi {
-    private static final String SERVER_URL = "http://26.44.245.147:8080/api/lop";
+    private static final String BASE_URL = ApiConfig.BASE_URL + "/api/lop";
     private HttpClient client;
     private Gson gson;
 
@@ -27,7 +27,7 @@ public class LopApi {
     public List<LopGVCN> getAllLop() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(SERVER_URL))
+                    .uri(URI.create(BASE_URL))
                     .GET()
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());

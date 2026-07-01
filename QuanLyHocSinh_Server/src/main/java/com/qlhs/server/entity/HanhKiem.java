@@ -15,7 +15,7 @@ public class HanhKiem {
     @Column(name = "MaHS", length = 50)
     private String maHS;
 
-    @Column(name = "MaLop", length = 50)
+    @Transient
     private String maLop;
 
     @Id
